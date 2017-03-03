@@ -8,23 +8,21 @@ class Play extends Phaser.State {
         //player         
         this.player = this.game.add.sprite(200, this.game.world.height/2, 'player');
         this.player.anchor.setTo(0.5, 0.5);
-        this.game.physics.arcade.enable(this.player);               
+        this.game.physics.arcade.enable(this.player);  
+        //this.player.body.collideWorldBounds = true;             
         this.player.body.gravity.y = 2000;        
-        this.player.body.collideWorldBounds = true;   
-
+       
         //globals        
-        this.RSPEED = 5;
+        this.RSPEED = 7;
         this.wallColors = ['green', 'pink', 'blue', 'maroon', 'orange', 'brown', 'purple']; 
       
         //groups
         this.doors = this.game.add.group(); 
         this.walls = this.game.add.group();
-      
-        
+              
         //score
         this.score = 0;
         this.scoreText = this.game.add.text(this.game.world.width/2, 20, '0', { fontSize: '90px', fill: 'whitesmoke' });  
-
 
         // player particles
         this.emitter = this.game.add.emitter(this.game.world.centerX, 200, 200);        
@@ -71,17 +69,13 @@ class Play extends Phaser.State {
         
         //collide with wall
         this.game.physics.arcade.overlap(this.player, this.walls, die, null, this);
-        function die (player, obs) { 
-            try{
-              this.emitter.destroy();
-                this.scoreText.kill();
-                this.state.start('Gameover', false, true, this.score);  
-            } catch(e){
-
-            }
-            
-        }    
+        function die(player, wall) {           
+            this.gameover();
+        }
         
+        //collide with bounds
+        if(this.player.body.y < -100 || this.player.body.y > this.game.world.height + 100) this.gameover();;
+                         
         //check bounds
         this.walls.forEachAlive(function(e){
             if(e.body.x < -100) e.kill();           
@@ -111,7 +105,7 @@ class Play extends Phaser.State {
                 d.body.velocity.x = speed;
                 d.body.acceleration.x = a;
                 this.doors.add(d);
-                i+=3;                
+                i+=2;                
             }            
             var w = this.game.add.sprite(x, (0 + i*60), 'wall_white');  
             this.game.physics.arcade.enable(w);
@@ -138,6 +132,30 @@ class Play extends Phaser.State {
     
     destroyEmitter(){
         this.burstEmitter.destroy();
+    }
+
+    gameover(){
+
+        try{
+            var self = this;
+            self.emitter.destroy();
+            self.scoreText.kill();   
+
+            //pause everything
+            self.walls.forEachAlive(function(e){
+                e.body.velocity.x = 0;
+                e.body.acceleration.x = 0;               
+            });
+            self.doors.forEachAlive(function(e){
+                e.body.velocity.x = 0;
+                e.body.acceleration.x = 0;               
+            });
+
+            self.player.body.moves = false;              
+
+            self.state.start('Gameover', false, true, self.score);  
+           
+        }catch(e){}
     }
         
     random(min, max){  
