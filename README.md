@@ -2,10 +2,10 @@
 
 flappy bird like game where you have to pass through the walls to earn points. Coded in ES6 using phaser JS.
 
-#demo
+# demo
 https://bibhuticoder.github.io/flairfly
 
-#Usage
+# Usage
 - npm install & npm start
 - localhost:3000 to view the running game
 
