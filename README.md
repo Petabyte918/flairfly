@@ -9,5 +9,5 @@ https://bibhuticoder.github.io/flairfly
 - npm install & npm start
 - localhost:3000 to view the running game
 
-#Screenshot
+# Screenshot
 ![Alt text](/scn.PNG)
